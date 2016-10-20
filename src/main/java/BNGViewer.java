@@ -9,7 +9,7 @@ import java.io.*;
 import javax.swing.border.EtchedBorder;
 
 
-public class BNGApplet extends JApplet {
+public class BNGViewer extends JFrame {
     String version = "Graphic Tool v0.2 beta";
 
     BNGWidgetPanel editor_panel = new BNGWidgetPanel(this);
@@ -37,8 +37,7 @@ public class BNGApplet extends JApplet {
         }
 
         public void windowClosing(WindowEvent e) {
-            // TODO Auto-generated method stub
-
+            System.exit(0);
         }
 
         public void windowDeactivated(WindowEvent e) {
@@ -196,17 +195,16 @@ public class BNGApplet extends JApplet {
 
     }
 
-    public BNGApplet() {
-
+    public BNGViewer() {
+        init();
     }
 
     public void init() {
-        JFrame frame = new JFrame();
-        frame.setSize(600, 400);
-        frame.setBackground(Color.white);
-        frame.addWindowListener(new FrameListener());
+        setSize(600, 400);
+        setBackground(Color.white);
+        addWindowListener(new FrameListener());
 
-        frame.setTitle(version);
+        setTitle(version);
 
         // Create the editor panel
         JToolBar toolbar = createToolbar();
@@ -239,13 +237,10 @@ public class BNGApplet extends JApplet {
         //getContentPane().add(drawing_panel, BorderLayout.CENTER);
         //getContentPane().add(text_panel, BorderLayout.SOUTH);
 
-        frame.add(drawing_panel, BorderLayout.CENTER);
-        frame.add(text_panel, BorderLayout.SOUTH);
+        add(drawing_panel, BorderLayout.CENTER);
+        add(text_panel, BorderLayout.SOUTH);
 
         setVisible(true);
-
-        frame.setVisible(true);
-
 
         //model_stub.parseBNGL("Lig(test!0!1,l).Lyn(test!0,SH2,U,SH2!1).Lig(l,l).Lyn(U,SH2)");
         model_stub.writeBNGL();
@@ -391,10 +386,7 @@ public class BNGApplet extends JApplet {
         this.mode = mode;
     }
 
-    // Override setsize() - called by html page
-    public void setSize(int width, int height) {
-        status_bar.setText("setSize called (" + width + ", " + height + ")");
-        setSize(200, 200);
-        validate();
+    public static void main(String[] args){
+        new BNGViewer();
     }
 }
