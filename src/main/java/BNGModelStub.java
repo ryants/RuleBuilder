@@ -2,12 +2,13 @@ import java.util.regex.*;
 import java.util.*; //For vector data structure
 import java.awt.Color;
 
-public class BNGModelStub 
+public class BNGModelStub
 {
 	private BNGViewer applet;
 	private BNGWidgetPanel panel;
 
-	private TreeMap edge_pairs = new TreeMap();
+	private TreeMap edge_pairs_lhs = new TreeMap();
+	private TreeMap edge_pairs_rhs = new TreeMap();
 	private TreeMap map_pairs = new TreeMap();
 
 	String molecule = "Lig(l,l).Lyn(U,SH2)";
@@ -16,7 +17,7 @@ public class BNGModelStub
 	int operand_backstep = -38;
 	int max_height = 0;
 
-	class XComparer implements Comparator 
+	class XComparer implements Comparator
 	{
 		public int compare(Object obj1, Object obj2)
 		{
@@ -44,7 +45,8 @@ public class BNGModelStub
 			applet.textbox.setForeground(Color.black);
 			applet.error_bar.setText("");
 
-			edge_pairs.clear();
+			edge_pairs_lhs.clear();
+			edge_pairs_rhs.clear();
 			map_pairs.clear();
 
 			String for_rate = "";
@@ -68,7 +70,7 @@ public class BNGModelStub
 			boolean saw_operator_last = false;
 
 			if (widgets.isEmpty()) bngl_string = "";
-			
+
 			Iterator widget_itr = widgets.iterator();
 			while ( widget_itr.hasNext() )
 			{
@@ -78,7 +80,7 @@ public class BNGModelStub
 				if ( widget.getClass().getName().equals("BNGOperator") )
 				{
 
-					if ( saw_operator_last ) 
+					if ( saw_operator_last )
 					{
 						throwFatalError("Operators must be separated by containers");
 					}
@@ -144,7 +146,7 @@ public class BNGModelStub
 						else if ( component.getBindingState().equalsIgnoreCase("allow additional bonds") )
 						{
 							bngl_string += "!?";
-						}	
+						}
 					}
 
 					saw_operator_last = false;
@@ -159,7 +161,7 @@ public class BNGModelStub
 			if (!rev_rate.equals("")) bngl_string += "," + rev_rate;
 
 			if (bngl_string.equals("")) return;
-			
+
 			applet.textbox.setText(bngl_string);
 
 			if ( countSubstring(bngl_string, "->") > 1) throwFatalError("Too many arrow operators");
@@ -175,7 +177,7 @@ public class BNGModelStub
 		}
 	}
 
-	public void parseOperand( String string ) throws BNGLInputMalformedException
+	public void parseOperand( String string, boolean isLHS ) throws BNGLInputMalformedException
 	{
 
 		System.out.println( "Molecule: " + string );
@@ -185,7 +187,7 @@ public class BNGModelStub
 		int container_x_offset = operand_offset;
 		for ( int i = 0; i < containers.length; i++ )
 		{
-			BNGContainer container = parseContainer( containers[i] );
+			BNGContainer container = parseContainer( containers[i], isLHS );
 
 			container.setX( container_x_offset );
 			panel.addContainer( container );
@@ -196,14 +198,15 @@ public class BNGModelStub
 			container_x_offset += 100;
 		}
 
-		operand_offset = container_x_offset + 25;		
+		operand_offset = container_x_offset + 25;
 	}
 
+	//TODO add capability of stripping out line-continuation strings (e.g. '->\ \n' or something)
 	public void parseBNGL( String string )
 	{
 		// The information text is displayed if there are no errors
 		String information = "";
-		
+
 		try
 		{
 			operand_offset = 0;
@@ -214,12 +217,16 @@ public class BNGModelStub
 			panel.applet.textbox.setForeground(Color.black);
 
 			// Reset the edge pairs
-			edge_pairs.clear();
+			edge_pairs_lhs.clear();
+			edge_pairs_rhs.clear();
 			map_pairs.clear();
 
 			// Nothing to process
-			if ( string.equals("")) return; 
+			if ( string.equals("")) return;
 
+            //Strip out line continuation characters
+            string = string.replaceAll("\\\\\\s*","");
+            
 			// Split on arrow operators
 			if ( string.contains("->") ) // -> includes <->
 			{
@@ -230,7 +237,7 @@ public class BNGModelStub
 				}
 
 				String rule[];
-				BNGOperator arrow = null;
+				BNGOperator arrow;
 
 				if ( string.contains("<->") )
 				{
@@ -243,10 +250,11 @@ public class BNGModelStub
 					rule = string.split("->");
 				}
 
-				String operands[] = rule[0].split("(?<!\\!)\\+");				
+				String operands[] = rule[0].split("(?<!!)\\+");
+                boolean isLHS = true;
 				for ( int i = 0; i < operands.length; i++ )
 				{
-					parseOperand(operands[i]);
+					parseOperand(operands[i],isLHS);
 
 					if ( i < operands.length - 1 )
 					{
@@ -262,87 +270,85 @@ public class BNGModelStub
 				arrow.setY(max_height/2);
 
 				// Read reaction rates
-
-
+                //TODO allow rates that have parentheses
 				try
-				{
-				
-				if (arrow.operator_type == 2)
-				{
-					java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\.]+)\\,\\s*([\\w\\.]+)\\s*\\z");
-					Matcher rates_fit = rates_pattern.matcher( string );
+                {
+                    if (arrow.operator_type == 2)
+                    {
+                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\.]+),\\s*([\\w\\.]+)\\s*\\z");
+                        Matcher rates_fit = rates_pattern.matcher( string );
 
-					if ( !rates_fit.find() )
-					{		
-						// Try to match at least one rate
-						java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w.]+)\\s*\\z");
-						Matcher rate_fit = rate_pattern.matcher( rule[1] );
+                        if ( !rates_fit.find() )
+                        {
+                            // Try to match at least one rate
+                            java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w.]+)\\s*\\z");
+                            Matcher rate_fit = rate_pattern.matcher( rule[1] );
 
-						if ( !rate_fit.find() )
-						{
-						}
-						else
-						{
-							arrow.setTopLabel( rate_fit.group( 1 ) );			
-					
-							information = "Rules require rates. Automatically added rate \'k\'";
-							string += ",k";
-							int caret_position = applet.textbox.getCaretPosition();
-							applet.textbox.setText(string);
-							applet.textbox.setCaretPosition(caret_position);
-							
-							rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+\\,\\s*[\\w\\.]+\\s*\\z", "");
-						}
-					}
-					else
-					{
+                            if ( !rate_fit.find() )
+                            {
+                            }
+                            else
+                            {
+                                arrow.setTopLabel( rate_fit.group( 1 ) );
 
-						arrow.setTopLabel( rates_fit.group( 1 ) );
-						arrow.setBottomLabel( rates_fit.group( 2 ) );
+                                information = "Rules require rates. Automatically added rate \'k\'";
+                                string += ",k";
+                                int caret_position = applet.textbox.getCaretPosition();
+                                applet.textbox.setText(string);
+                                applet.textbox.setCaretPosition(caret_position);
 
-						// Consume rates so operand parser doesn't get confused if there are
-						// decimal points in the rates
-						rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+\\,\\s*[\\w\\.]+\\s*\\z", "");
-					}
-				}
-				else
-				{
-					java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\.]+)\\,\\s*([\\w\\.]+)\\s*\\z");
-					Matcher rates_fit = rates_pattern.matcher( string );
+                                rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+,\\s*[\\w\\.]+\\s*\\z", "");
+                            }
+                        }
+                        else
+                        {
 
-					if ( rates_fit.find() )
-					{		
-						throwFatalError("forward arrow cannot receive a reverse rate");
-					}
+                            arrow.setTopLabel( rates_fit.group( 1 ) );
+                            arrow.setBottomLabel( rates_fit.group( 2 ) );
 
-					java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w.]+)\\s*\\z");
-					Matcher rate_fit = rate_pattern.matcher( rule[1] );
+                            // Consume rates so operand parser doesn't get confused if there are
+                            // decimal points in the rates
+                            rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+,\\s*[\\w\\.]+\\s*\\z", "");
+                        }
+                    }
+                    else
+                    {
+                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\.]+),\\s*([\\w\\.]+)\\s*\\z");
+                        Matcher rates_fit = rates_pattern.matcher( string );
 
-					if ( !rate_fit.find() )
-					{		
-						//String error_msg = "Could not parse reaction rate";
-						//displayError(error_msg);
-						information = "Rules require rates. Automatically added \'k\'";
-						
-						string += " k";
-						int caret_position = applet.textbox.getCaretPosition();
-						applet.textbox.setText(string);
-						applet.textbox.setCaretPosition(caret_position);
-					}
-					else
-					{
-						arrow.setTopLabel( rate_fit.group( 1 ) );			
-						
-						// Consume rate so operand parser doesn't get confused if there are
-						// decimal points in the rates
-						rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+\\s*\\z", "");
-					}
-					
-				}
+                        if ( rates_fit.find() )
+                        {
+                            throwFatalError("forward arrow cannot receive a reverse rate");
+                        }
 
-				panel.addOperator(arrow);
+                        java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w.]+)\\s*\\z");
+                        Matcher rate_fit = rate_pattern.matcher( rule[1] );
 
-					operands = rule[1].split("(?<!\\!)\\+");
+                        if ( !rate_fit.find() )
+                        {
+                            //String error_msg = "Could not parse reaction rate";
+                            //displayError(error_msg);
+                            information = "Rules require rates. Automatically added \'k\'";
+
+                            string += " k";
+                            int caret_position = applet.textbox.getCaretPosition();
+                            applet.textbox.setText(string);
+                            applet.textbox.setCaretPosition(caret_position);
+                        }
+                        else
+                        {
+                            arrow.setTopLabel( rate_fit.group( 1 ) );
+
+                            // Consume rate so operand parser doesn't get confused if there are
+                            // decimal points in the rates
+                            rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+\\s*\\z", "");
+                        }
+
+                    }
+
+                    panel.addOperator(arrow);
+                    operands = rule[1].split("(?<!!)\\+");
+                    isLHS = false;
 				}
 				catch ( ArrayIndexOutOfBoundsException e)
 				{
@@ -351,7 +357,7 @@ public class BNGModelStub
 
 				for ( int i = 0; i < operands.length; i++ )
 				{
-					parseOperand(operands[i]);
+					parseOperand(operands[i],isLHS);
 
 					if ( i < operands.length - 1 )
 					{
@@ -365,10 +371,11 @@ public class BNGModelStub
 			}
 			else
 			{
-				String operands[] = string.split("(?<!\\!)\\+");				
+				String operands[] = string.split("(?<!!)\\+");
+                boolean isLHS = true;
 				for ( int i = 0; i < operands.length; i++ )
 				{
-					parseOperand(operands[i]);
+					parseOperand(operands[i],isLHS);
 
 					if ( i < operands.length - 1 )
 					{
@@ -380,12 +387,12 @@ public class BNGModelStub
 				}
 			}
 
-			// Add edges
-			Iterator i = edge_pairs.entrySet().iterator();
+			// Add LHS edges
+			Iterator i_lhs = edge_pairs_lhs.entrySet().iterator();
 			// Display elements
-			while(i.hasNext()) 
+			while(i_lhs.hasNext())
 			{
-				Map.Entry me = (Map.Entry)i.next();
+				Map.Entry me = (Map.Entry)i_lhs.next();
 				System.out.print(me.getKey() + ": ");
 				System.out.println(me.getValue());
 				BNGComponent[] component_pair = (BNGComponent[])me.getValue();
@@ -400,12 +407,33 @@ public class BNGModelStub
 				//component_pair[0].addEdge(edge);
 				//component_pair[1].addEdge(edge);
 				panel.edges.add(edge);
-			} 
+			}
+            // Add RHS edges
+            Iterator i_rhs = edge_pairs_rhs.entrySet().iterator();
+            // Display elements
+            while(i_rhs.hasNext())
+            {
+                Map.Entry me = (Map.Entry)i_rhs.next();
+                System.out.print(me.getKey() + ": ");
+                System.out.println(me.getValue());
+                BNGComponent[] component_pair = (BNGComponent[])me.getValue();
+
+                if ( component_pair[1] == null )
+                {
+                    String error_msg = "Unmatched edge endpoint: " + me.getKey();
+                    throwFatalError( error_msg );
+                }
+
+                BNGEdge edge = new BNGEdge(panel, component_pair[0], component_pair[1]);
+                //component_pair[0].addEdge(edge);
+                //component_pair[1].addEdge(edge);
+                panel.edges.add(edge);
+            }
 
 			// Add maps
 			Iterator mapi = map_pairs.entrySet().iterator();
 			// Display elements
-			while(mapi.hasNext()) 
+			while(mapi.hasNext())
 			{
 				Map.Entry me = (Map.Entry)mapi.next();
 				System.out.print(me.getKey() + ": ");
@@ -426,7 +454,7 @@ public class BNGModelStub
 				edge.setMap(true);
 
 				panel.edges.add(edge);
-			} 
+			}
 
 			if ( !applet.editor_panel.checkMapsAndEdges() )
 			{
@@ -434,7 +462,7 @@ public class BNGModelStub
 			}
 
 			applet.error_bar.setText(information);
-		} 
+		}
 		catch ( BNGLInputMalformedException e )
 		{
 			panel.initialize();
@@ -442,7 +470,7 @@ public class BNGModelStub
 		}
 	}
 
-	private BNGContainer parseContainer( String string ) throws BNGLInputMalformedException
+	private BNGContainer parseContainer( String string, boolean isLHS ) throws BNGLInputMalformedException
 	{
 		System.out.println("Container String: " + string);
 
@@ -453,30 +481,25 @@ public class BNGModelStub
 
 		// strip trailing spaces
 		string = string.replaceFirst("\\s*\\z", "");
-		
+
 		// strip trailing spaces
 		string = string.replaceFirst("^\\s*", "");
-	
+
 		if ( countSubstring(string, "(") > 1 || countSubstring( string, ")") > 1 )
 		{
 			throwFatalError("Too many parentheses in container");
 		}
 
-		java.util.regex.Pattern container_label_pattern = java.util.regex.Pattern.compile("^\\s*([A-Za-z0-9_*]+)");
+		java.util.regex.Pattern container_label_pattern = java.util.regex.Pattern.compile("^\\s*([A-Za-z]\\w*)");
 		Matcher container_label_fit = container_label_pattern.matcher( string );
 
 		if ( !container_label_fit.find() )
-		{		
+		{
 			String error_msg = "Container \""+string+"\" is malformed.";
 			throwFatalError(error_msg);
 		}
 
 		String container_label = container_label_fit.group( 1 );
-
-		if (container_label.contains("*"))
-		{
-			throwFatalError("\"*\" is reserved for component state wildcards");
-		}
 
 		System.out.println("Container Label: " + container_label );
 
@@ -492,7 +515,7 @@ public class BNGModelStub
 		{
 			// Handle label-only container
 			if ( string.equals(container_label)) return container;
-			else 
+			else
 			{
 				String error_msg = "The container \"" + string + "\" is malformed";
 				throwFatalError( error_msg );
@@ -505,28 +528,27 @@ public class BNGModelStub
 
 		if (!leftover_str.equals(""))
 		{
-			throwFatalError("Extranious characters \""+leftover_str+"\" in container");
+			throwFatalError("Extraneous characters \""+leftover_str+"\" in container");
 		}
 
 		int current_x_offset = 20;
 		int current_y_offset = 20;
 
-		String[] components = components_str.split("[\\(\\,\\)]");
+		String[] components = components_str.split(",");
 		for ( int i = 0; i < components.length; i++ )
-		{ 
+		{
 			String component_string = components[i];
-			if ( component_string.matches( "\\s*" ) )
+			if (component_string.equals(""))
 			{
-				continue;
+				break;
 			}
 
 			System.out.println( "Model: Processing component: " + component_string + " (size="+component_string.length()+")");
 
-			BNGComponent new_component = new BNGComponent(panel); 
+			BNGComponent new_component = new BNGComponent(panel);
 
-			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)~?([\\w\\*]+)?");
+			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)(~\\w+)?");
 			Matcher fit = component_pattern.matcher(component_string);
-
 
 			if ( !fit.find() )
 			{
@@ -534,31 +556,20 @@ public class BNGModelStub
 				throwFatalError( error_msg );
 			}
 
-			String component_label = null; 
-			String state = null;
-
-			component_label = fit.group(1);
-
-			if (component_label.contains("*"))
-			{
-				throwFatalError("\"*\" is reserved for component state wildcards");
-			}
-
-			state = fit.group(2);
-
+			String component_label = fit.group(1);
+			String state = fit.group(2);
 
 			System.out.println( "Model: Processing component: state = " + state );
 
-
 			// Match edges
-			java.util.regex.Pattern edge_pattern = java.util.regex.Pattern.compile("\\!(\\d+|\\+|\\?)");
+			java.util.regex.Pattern edge_pattern = java.util.regex.Pattern.compile("!(\\d+|\\+|\\?)");
 			Matcher edge_fit = edge_pattern.matcher(component_string);
 
 			while ( edge_fit.find() )
 			{
 				String edge_id = edge_fit.group(1);
 
-				System.out.println("Found edge " + edge_id + " attached to component " + component_label ); 
+				System.out.println("Found edge " + edge_id + " attached to component " + component_label );
 
 				if ( edge_id.equals("?") )
 				{
@@ -572,13 +583,18 @@ public class BNGModelStub
 				{
 					new_component.setBindingState("no additional bonds");
 
-					BNGComponent[] component_pair = (BNGComponent[])edge_pairs.get(edge_id);
+					BNGComponent[] component_pair =
+							(isLHS) ? (BNGComponent[])edge_pairs_lhs.get(edge_id) : (BNGComponent[])edge_pairs_rhs.get(edge_id);
 
 					if ( component_pair == null )
 					{
 						component_pair = new BNGComponent[2];
 						component_pair[0] = new_component;
-						edge_pairs.put( edge_id, component_pair );
+						if (isLHS) {
+							edge_pairs_lhs.put(edge_id, component_pair);
+						} else {
+							edge_pairs_rhs.put(edge_id, component_pair);
+						}
 					}
 					else
 					{
@@ -586,7 +602,7 @@ public class BNGModelStub
 						{
 							System.out.println("Error (Sanity Check Failed): component_pair should not be non-null when zeroth element is null");
 						}
-						else if ( component_pair[1] == null ) 
+						else if ( component_pair[1] == null )
 						{
 							component_pair[1] = new_component;
 						}
@@ -599,7 +615,7 @@ public class BNGModelStub
 			}
 
 			// Match maps
-			java.util.regex.Pattern map_pattern = java.util.regex.Pattern.compile("\\%(\\d+)");
+			java.util.regex.Pattern map_pattern = java.util.regex.Pattern.compile("%(\\d+)");
 			Matcher map_fit = map_pattern.matcher(component_string);
 
 			//new_component.setBindingState("No Additional Bonds");
@@ -608,7 +624,7 @@ public class BNGModelStub
 			{
 				String edge_id = map_fit.group(1);
 
-				System.out.println("Found map " + edge_id + " attached to component " + component_label ); 
+				System.out.println("Found map " + edge_id + " attached to component " + component_label );
 
 				BNGComponent[] component_pair = (BNGComponent[])map_pairs.get(edge_id);
 
@@ -651,6 +667,7 @@ public class BNGModelStub
 			current_y_offset += 50;
 		}
 
+
 		return container;
 	}
 
@@ -666,7 +683,7 @@ public class BNGModelStub
 		applet.error_bar.setText(string);
 		applet.textbox.setForeground(Color.red);
 	}
-		
+
 	public int countSubstring(String str, String substr)
 	{
 		String temp=str;
