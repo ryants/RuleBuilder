@@ -276,14 +276,14 @@ public class BNGModelStub
                     if (arrow.operator_type == 2)
                     {
                         java.util.regex.Pattern rates_pattern =
-                                java.util.regex.Pattern.compile("\\s+([\\d\\w\\)\\(/\\.\\*\\-]+),\\s*([\\d\\w\\)\\(/\\.\\*\\-]+)\\s*\\z");
+                                java.util.regex.Pattern.compile("\\s+([\\w\\)\\(/\\.\\*\\-]+),\\s*([\\w\\)\\(/\\.\\*\\-]+)\\s*\\z");
                         Matcher rates_fit = rates_pattern.matcher( rule[1] );
 
                         if ( !rates_fit.find() )
                         {
                             // Try to match at least one rate
                             java.util.regex.Pattern rate_pattern =
-                                    java.util.regex.Pattern.compile("\\s+([\\d\\w\\)\\(/\\.\\*\\-]+)\\s*\\z");
+                                    java.util.regex.Pattern.compile("\\s+([\\w\\)\\(/\\.\\*\\-]+)\\s*\\z");
                             Matcher rate_fit = rate_pattern.matcher( rule[1] );
 
                             if ( !rate_fit.find() )
@@ -316,7 +316,7 @@ public class BNGModelStub
                     }
                     else
                     {
-                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\d\\w\\)\\(\\.\\*/\\-]+),\\s*([\\d\\w/\\)\\(\\.\\*\\-]+)\\s*\\z");
+                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\)\\(\\.\\*/\\-]+),\\s*([\\w/\\)\\(\\.\\*\\-]+)\\s*\\z");
                         Matcher rates_fit = rates_pattern.matcher( rule[1] );
 
                         if ( rates_fit.find() )
@@ -324,7 +324,7 @@ public class BNGModelStub
                             throwFatalError("forward arrow cannot receive a reverse rate");
                         }
 
-                        java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\d\\w/\\)\\(\\.\\*\\-\\+]+)\\s*\\z");
+                        java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w/\\)\\(\\.\\*\\-\\+]+)\\s*\\z");
                         Matcher rate_fit = rate_pattern.matcher( rule[1] );
 
                         if ( !rate_fit.find() )
@@ -549,6 +549,12 @@ public class BNGModelStub
 			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)(~\\w+)?");
 			Matcher fit = component_pattern.matcher(component_string);
 
+			//Confirm only one state per site
+			if (component_string.split("~",-1).length > 2){
+				String error_msg = "Only have 1 state per site (multiple '~' chars found)";
+				throwFatalError(error_msg);
+			}
+
 			if ( !fit.find() )
 			{
 				String error_msg = "Component "+component_string+" is malformed";
@@ -648,7 +654,7 @@ public class BNGModelStub
 
 			container.addComponent(new_component);
 
-			if (state != null) component_label += "~" + state;
+			if (state != null) component_label += state;
 
 			new_component.setLabel(component_label);
 			new_component.x = current_x_offset;
