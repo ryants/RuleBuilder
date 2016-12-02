@@ -182,7 +182,9 @@ public class BNGModelStub
 
 		System.out.println( "Molecule: " + string );
 		String containers[] = string.split("\\.");
-
+        if (!isLHS) {
+            containers[containers.length - 1] = containers[containers.length - 1].replaceAll("(?<=\\))\\s+.*\\z", "");
+        }
 		// Process the containers
 		int container_x_offset = operand_offset;
 		for ( int i = 0; i < containers.length; i++ )
@@ -201,7 +203,6 @@ public class BNGModelStub
 		operand_offset = container_x_offset + 25;
 	}
 
-	//TODO add capability of stripping out line-continuation strings (e.g. '->\ \n' or something)
 	public void parseBNGL( String string )
 	{
 		// The information text is displayed if there are no errors
@@ -270,34 +271,40 @@ public class BNGModelStub
 				arrow.setY(max_height/2);
 
 				// Read reaction rates
-                //TODO allow rates that have parentheses
 				try
                 {
                     if (arrow.operator_type == 2)
                     {
-                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\.]+),\\s*([\\w\\.]+)\\s*\\z");
-                        Matcher rates_fit = rates_pattern.matcher( string );
+                        java.util.regex.Pattern rates_pattern =
+                                java.util.regex.Pattern.compile("\\s+([\\d\\w\\)\\(/\\.\\*\\-]+),\\s*([\\d\\w\\)\\(/\\.\\*\\-]+)\\s*\\z");
+                        Matcher rates_fit = rates_pattern.matcher( rule[1] );
 
                         if ( !rates_fit.find() )
                         {
                             // Try to match at least one rate
-                            java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w.]+)\\s*\\z");
+                            java.util.regex.Pattern rate_pattern =
+                                    java.util.regex.Pattern.compile("\\s+([\\d\\w\\)\\(/\\.\\*\\-]+)\\s*\\z");
                             Matcher rate_fit = rate_pattern.matcher( rule[1] );
 
                             if ( !rate_fit.find() )
                             {
+                                arrow.setTopLabel("kf");
+                                arrow.setBottomLabel("kr");
+                                string += " kf,kr";
+                                int caret_position = applet.textbox.getCaretPosition();
+                                applet.textbox.setText(string);
+                                applet.textbox.setCaretPosition(caret_position);
                             }
                             else
                             {
                                 arrow.setTopLabel( rate_fit.group( 1 ) );
 
-                                information = "Rules require rates. Automatically added rate \'k\'";
-                                string += ",k";
+                                information = "Rules require rates. Automatically added rate \'k-\'";
+                                string += ",kr";
                                 int caret_position = applet.textbox.getCaretPosition();
                                 applet.textbox.setText(string);
                                 applet.textbox.setCaretPosition(caret_position);
 
-                                rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+,\\s*[\\w\\.]+\\s*\\z", "");
                             }
                         }
                         else
@@ -305,23 +312,19 @@ public class BNGModelStub
 
                             arrow.setTopLabel( rates_fit.group( 1 ) );
                             arrow.setBottomLabel( rates_fit.group( 2 ) );
-
-                            // Consume rates so operand parser doesn't get confused if there are
-                            // decimal points in the rates
-                            rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+,\\s*[\\w\\.]+\\s*\\z", "");
                         }
                     }
                     else
                     {
-                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\w\\.]+),\\s*([\\w\\.]+)\\s*\\z");
-                        Matcher rates_fit = rates_pattern.matcher( string );
+                        java.util.regex.Pattern rates_pattern = java.util.regex.Pattern.compile("\\s+([\\d\\w\\)\\(\\.\\*/\\-]+),\\s*([\\d\\w/\\)\\(\\.\\*\\-]+)\\s*\\z");
+                        Matcher rates_fit = rates_pattern.matcher( rule[1] );
 
                         if ( rates_fit.find() )
                         {
                             throwFatalError("forward arrow cannot receive a reverse rate");
                         }
 
-                        java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\w.]+)\\s*\\z");
+                        java.util.regex.Pattern rate_pattern = java.util.regex.Pattern.compile("\\s+([\\d\\w/\\)\\(\\.\\*\\-\\+]+)\\s*\\z");
                         Matcher rate_fit = rate_pattern.matcher( rule[1] );
 
                         if ( !rate_fit.find() )
@@ -338,10 +341,6 @@ public class BNGModelStub
                         else
                         {
                             arrow.setTopLabel( rate_fit.group( 1 ) );
-
-                            // Consume rate so operand parser doesn't get confused if there are
-                            // decimal points in the rates
-                            rule[1] = rule[1].replaceFirst("\\s+[\\w\\.]+\\s*\\z", "");
                         }
 
                     }
