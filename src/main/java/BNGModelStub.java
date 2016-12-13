@@ -489,12 +489,12 @@ public class BNGModelStub
 			throwFatalError("Too many parentheses in container");
 		}
 
-		java.util.regex.Pattern container_label_pattern = java.util.regex.Pattern.compile("^\\s*([A-Za-z]\\w*)");
+		java.util.regex.Pattern container_label_pattern = java.util.regex.Pattern.compile("^\\s*([A-Za-z]\\w*)(?=\\()");
 		Matcher container_label_fit = container_label_pattern.matcher( string );
 
 		if ( !container_label_fit.find() )
 		{
-			String error_msg = "Container \""+string+"\" is malformed.";
+			String error_msg = "Container \""+string+"\" is malformed";
 			throwFatalError(error_msg);
 		}
 
@@ -546,7 +546,7 @@ public class BNGModelStub
 
 			BNGComponent new_component = new BNGComponent(panel);
 
-			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)(~\\w+)?");
+			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)(~\\w+)?(?!\\W)");
 			Matcher fit = component_pattern.matcher(component_string);
 
 			//Confirm only one state per site
@@ -555,7 +555,7 @@ public class BNGModelStub
 				throwFatalError(error_msg);
 			}
 
-			if ( !fit.find() )
+			if ( !fit.matches() )
 			{
 				String error_msg = "Component "+component_string+" is malformed";
 				throwFatalError( error_msg );
