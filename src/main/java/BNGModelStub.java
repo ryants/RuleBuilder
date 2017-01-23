@@ -546,7 +546,7 @@ public class BNGModelStub
 
 			BNGComponent new_component = new BNGComponent(panel);
 
-			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)(~\\w+)?(?!\\W)");
+			java.util.regex.Pattern component_pattern = java.util.regex.Pattern.compile("(\\w+)(~(\\w+|\\?))?(!([0-9]+|\\?|\\+))?");
 			Matcher fit = component_pattern.matcher(component_string);
 
 			//Confirm only one state per site
