@@ -10,7 +10,7 @@ import javax.swing.border.EtchedBorder;
 
 
 public class BNGViewer extends JFrame {
-    String version = "Graphic Tool v0.2 beta";
+    String version = "RuleBuilder";
 
     BNGWidgetPanel editor_panel = new BNGWidgetPanel(this);
     BNGModelStub model_stub = new BNGModelStub(this);
