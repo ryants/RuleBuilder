@@ -23,7 +23,7 @@ public class BNGContainer extends BNGWidget {
 		super(panel);
         width = 75;
     	height = 50;
-		setLabel("Container");
+		setLabel("Molecule");
 	}
 	
 	public void display(Component c, Graphics2D g2d)

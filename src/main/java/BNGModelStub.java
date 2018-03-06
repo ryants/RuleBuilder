@@ -82,7 +82,7 @@ public class BNGModelStub
 
 					if ( saw_operator_last )
 					{
-						throwFatalError("Operators must be separated by containers");
+						throwFatalError("Operators must be separated by molecules");
 					}
 
 					need_dot = false;
@@ -471,11 +471,11 @@ public class BNGModelStub
 
 	private BNGContainer parseContainer( String string, boolean isLHS ) throws BNGLInputMalformedException
 	{
-		System.out.println("Container String: " + string);
+		System.out.println("Molecule String: " + string);
 
 		if ( string.equals(""))
 		{
-			throwFatalError("A container is missing");
+			throwFatalError("A molecule is missing");
 		}
 
 		// strip trailing spaces
@@ -486,7 +486,7 @@ public class BNGModelStub
 
 		if ( countSubstring(string, "(") > 1 || countSubstring( string, ")") > 1 )
 		{
-			throwFatalError("Too many parentheses in container");
+			throwFatalError("Too many parentheses in molecule");
 		}
 
 		java.util.regex.Pattern container_label_pattern = java.util.regex.Pattern.compile("^\\s*([A-Za-z]\\w*)(?=\\()");
@@ -494,13 +494,13 @@ public class BNGModelStub
 
 		if ( !container_label_fit.find() )
 		{
-			String error_msg = "Container \""+string+"\" is malformed";
+			String error_msg = "Molecule \""+string+"\" is malformed";
 			throwFatalError(error_msg);
 		}
 
 		String container_label = container_label_fit.group( 1 );
 
-		System.out.println("Container Label: " + container_label );
+		System.out.println("Molecule Label: " + container_label );
 
 		BNGContainer container = new BNGContainer( panel );
 
@@ -516,7 +516,7 @@ public class BNGModelStub
 			if ( string.equals(container_label)) return container;
 			else
 			{
-				String error_msg = "The container \"" + string + "\" is malformed";
+				String error_msg = "The molecule \"" + string + "\" is malformed";
 				throwFatalError( error_msg );
 			}
 		}
@@ -527,7 +527,7 @@ public class BNGModelStub
 
 		if (!leftover_str.equals(""))
 		{
-			throwFatalError("Extraneous characters \""+leftover_str+"\" in container");
+			throwFatalError("Extraneous characters \""+leftover_str+"\" in molecule");
 		}
 
 		int current_x_offset = 20;
