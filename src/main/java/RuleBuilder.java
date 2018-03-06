@@ -261,7 +261,7 @@ public class RuleBuilder extends JFrame {
         URL double_arrow_gif_url = cldr.getResource("double_arrow.gif");
         URL arrow_gif_url = cldr.getResource("arrow.gif");
         URL plus_gif_url = cldr.getResource("plus.gif");
-        URL save_gif_url = cldr.getResource("toImage.png");
+        URL save_gif_url = cldr.getResource("save.gif");
 
 //	  Create a set of actions to use in both the menu and toolbar.
         ImageIcon manip_icon = new ImageIcon(manip_gif_url);
