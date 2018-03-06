@@ -417,21 +417,22 @@ public class BNGWidgetPanel extends JPanel {
 					}
 				}
 			}
-			else if ( applet.mode.contains("add components") )
+			else if ( applet.mode.contains("add sites") )
 			{
 				BNGComponent component = new BNGComponent(panel); 
 				component.setX( e.getX() - component.width/2 );
 				component.setY( e.getY() - component.height/2 );
 				addComponent(component);
 		
-				if (applet.mode.equals("add components (allow additional bonds)" ))
+				if (applet.mode.equals("add sites (arbitrary bond state)" ))
 						component.setBindingState("allow additional bonds");
-				else if (applet.mode.equals("add components (no additional bonds)" ))
+				else if (applet.mode.equals("add sites (unbound)" ))
 						component.setBindingState("no additional bonds");
-				else if (applet.mode.equals("add components (additional bonds)" ))
+				else if (applet.mode.equals("add sites (unknown binding partner)" ))
 						component.setBindingState("additional bonds");
 			}
-			else if ( applet.mode.equals("add containers") )
+			else if ( applet.mode.equals("" +
+					"add molecule") )
 			{
 				BNGContainer container = new BNGContainer(panel); 
 				container.setX( e.getX() - container.width/2 );
