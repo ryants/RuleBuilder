@@ -156,24 +156,24 @@ public class BNGViewer extends JFrame {
                 if (getValue(NAME).equals("manipulate")) {
                     setMode("manipulate");
                     status_bar.setText("Object Manipulation Mode");
-                } else if (getValue(NAME).equals("add edge")) {
-                    setMode("add edges");
-                    status_bar.setText("Add Edge Mode");
+                } else if (getValue(NAME).equals("add bond")) {
+                    setMode("add bond");
+                    status_bar.setText("Add Bond Mode");
                 } else if (getValue(NAME).equals("add map")) {
                     setMode("add maps");
                     status_bar.setText("Add Map Mode");
-                } else if (getValue(NAME).equals("add components (allow additional bonds)")) {
-                    setMode("add components (allow additional bonds)");
-                    status_bar.setText("Add Components (allow additional bonds)");
-                } else if (getValue(NAME).equals("add components (no additional bonds)")) {
-                    setMode("add components (no additional bonds)");
-                    status_bar.setText("Add Components (no additional bonds)");
-                } else if (getValue(NAME).equals("add components (additional bonds)")) {
-                    setMode("add components (additional bonds)");
-                    status_bar.setText("Add Components (additional bonds)");
-                } else if (getValue(NAME).equals("add container")) {
-                    setMode("add containers");
-                    status_bar.setText("Add Container");
+                } else if (getValue(NAME).equals("add sites (arbitrary bond state)")) {
+                    setMode("add sites (arbitrary bond state)");
+                    status_bar.setText("Add Site (arbitrary bond state)");
+                } else if (getValue(NAME).equals("add sites (unbound)")) {
+                    setMode("add sites (unbound)");
+                    status_bar.setText("Add Site (unbound)");
+                } else if (getValue(NAME).equals("add sites (unknown binding partner)")) {
+                    setMode("add sites (unknown binding partner)");
+                    status_bar.setText("Add Site (unknown binding partner)");
+                } else if (getValue(NAME).equals("add molecule")) {
+                    setMode("add molecule");
+                    status_bar.setText("Add Molecule");
                 } else if (getValue(NAME).equals("add operator (plus)")) {
                     setMode("add operator (plus)");
                     status_bar.setText("Add Plus Operator");
@@ -272,22 +272,22 @@ public class BNGViewer extends JFrame {
         ToolbarAction save_action = new ToolbarAction("save", new ImageIcon(save_gif_url), "export to image", 'S', editor_panel);
 
         ImageIcon add_edge_icon = new ImageIcon(add_edge_gif_url);
-        ToolbarAction rule_add_edge_action = new ToolbarAction("add edge", add_edge_icon, "Edge", 'A', editor_panel);
+        ToolbarAction rule_add_edge_action = new ToolbarAction("add bond", add_edge_icon, "Bond", 'A', editor_panel);
 
         ImageIcon add_map_icon = new ImageIcon(add_map_gif_url);
         ToolbarAction rule_add_map_action = new ToolbarAction("add map", add_map_icon, "Map", 'M', editor_panel);
 
         ImageIcon add_container_icon = new ImageIcon(container_gif_url);
-        ToolbarAction rule_add_container_action = new ToolbarAction("add container", add_container_icon, "container", 'N', editor_panel);
+        ToolbarAction rule_add_container_action = new ToolbarAction("add molecule", add_container_icon, "molecule", 'N', editor_panel);
 
         ImageIcon add_unspecified_component_icon = new ImageIcon(unspecified_component_gif_url);
-        ToolbarAction rule_add_unspecified_component_action = new ToolbarAction("add components (allow additional bonds)", add_unspecified_component_icon, "Unspecified Binding Component", 'C', editor_panel);
+        ToolbarAction rule_add_unspecified_component_action = new ToolbarAction("add sites (arbitrary bond state)", add_unspecified_component_icon, "site with arbitrary bond state", 'C', editor_panel);
 
         ImageIcon add_bound_component_icon = new ImageIcon(bound_component_gif_url);
-        ToolbarAction rule_add_bound_component_action = new ToolbarAction("add components (additional bonds)", new ImageIcon(bound_component_gif_url), "bound component", 'C', editor_panel);
+        ToolbarAction rule_add_bound_component_action = new ToolbarAction("add sites (unknown binding partner)", new ImageIcon(bound_component_gif_url), "site bound to unknown partner", 'C', editor_panel);
 
         ImageIcon add_unbound_component_icon = new ImageIcon(unbound_component_gif_url);
-        ToolbarAction rule_add_unbound_component_action = new ToolbarAction("add components (no additional bonds)", new ImageIcon(unbound_component_gif_url), "unbound component", 'C', editor_panel);
+        ToolbarAction rule_add_unbound_component_action = new ToolbarAction("add sites (unbound)", new ImageIcon(unbound_component_gif_url), "unbound site", 'C', editor_panel);
 
         ImageIcon add_arrow_icon = new ImageIcon(arrow_gif_url);
         ToolbarAction add_arrow_action = new ToolbarAction("add operator (arrow)", add_arrow_icon, "arrow", 'C', editor_panel);
