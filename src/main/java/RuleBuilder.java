@@ -158,10 +158,10 @@ public class RuleBuilder extends JFrame {
                     status_bar.setText("Object Manipulation Mode");
                 } else if (getValue(NAME).equals("add bond")) {
                     setMode("add bond");
-                    status_bar.setText("Add Bond Mode");
+                    status_bar.setText("Add Bond (constructs a bond between two sites)");
                 } else if (getValue(NAME).equals("add map")) {
                     setMode("add maps");
-                    status_bar.setText("Add Map Mode");
+                    status_bar.setText("Add Mapping (defines a mapping between objects on either side of a rule)");
                 } else if (getValue(NAME).equals("add sites (arbitrary bond state)")) {
                     setMode("add sites (arbitrary bond state)");
                     status_bar.setText("Add Site (arbitrary bond state)");
@@ -170,19 +170,19 @@ public class RuleBuilder extends JFrame {
                     status_bar.setText("Add Site (unbound)");
                 } else if (getValue(NAME).equals("add sites (unknown binding partner)")) {
                     setMode("add sites (unknown binding partner)");
-                    status_bar.setText("Add Site (unknown binding partner)");
+                    status_bar.setText("Add Site (bound, unspecified binding partner)");
                 } else if (getValue(NAME).equals("add molecule")) {
                     setMode("add molecule");
                     status_bar.setText("Add Molecule");
                 } else if (getValue(NAME).equals("add operator (plus)")) {
                     setMode("add operator (plus)");
-                    status_bar.setText("Add Plus Operator");
+                    status_bar.setText("Add Plus Sign (separates molecules that are part of distinct species");
                 } else if (getValue(NAME).equals("add operator (arrow)")) {
                     setMode("add operator (arrow)");
-                    status_bar.setText("Add Arrow Operator");
+                    status_bar.setText("Add Single Arrow (defines a unidirectional rule)");
                 } else if (getValue(NAME).equals("add operator (double arrow)")) {
                     setMode("add operator (double arrow)");
-                    status_bar.setText("Add Double-Arrow Operator");
+                    status_bar.setText("Add Double Arrow (defines a bidirectional rule)");
                 }
 
             }
