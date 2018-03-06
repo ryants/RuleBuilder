@@ -29,7 +29,7 @@ public class BNGWidgetPanel extends JPanel {
 	// Temporary edge end points
 	protected BNGComponent start, end;
 
-	public BNGViewer applet; // Pointer to the applet
+	public RuleBuilder applet; // Pointer to the applet
 
 	protected MouseControl mouse_control = new MouseControl( this );
 	protected KeyboardControl keyboard_control = new KeyboardControl();
@@ -471,7 +471,7 @@ public class BNGWidgetPanel extends JPanel {
 		}
 	}
 
-	public BNGWidgetPanel(BNGViewer applet)
+	public BNGWidgetPanel(RuleBuilder applet)
 	{
 		this.applet = applet;
 		addMouseMotionListener(mouse_control);

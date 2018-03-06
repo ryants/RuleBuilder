@@ -9,7 +9,7 @@ import java.io.*;
 import javax.swing.border.EtchedBorder;
 
 
-public class BNGViewer extends JFrame {
+public class RuleBuilder extends JFrame {
     String version = "RuleBuilder";
 
     BNGWidgetPanel editor_panel = new BNGWidgetPanel(this);
@@ -195,7 +195,7 @@ public class BNGViewer extends JFrame {
 
     }
 
-    public BNGViewer() {
+    public RuleBuilder() {
         init();
     }
 
@@ -387,6 +387,6 @@ public class BNGViewer extends JFrame {
     }
 
     public static void main(String[] args){
-        new BNGViewer();
+        new RuleBuilder();
     }
 }

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class BNGModelStub
 {
-	private BNGViewer applet;
+	private RuleBuilder applet;
 	private BNGWidgetPanel panel;
 
 	private TreeMap edge_pairs_lhs = new TreeMap();
@@ -30,7 +30,7 @@ public class BNGModelStub
 		}
 	}
 
-	public BNGModelStub( BNGViewer applet )
+	public BNGModelStub( RuleBuilder applet )
 	{
 		this.applet = applet;
 		panel = applet.editor_panel;
