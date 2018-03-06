@@ -176,13 +176,13 @@ public class RuleBuilder extends JFrame {
                     status_bar.setText("Add Molecule");
                 } else if (getValue(NAME).equals("add operator (plus)")) {
                     setMode("add operator (plus)");
-                    status_bar.setText("Add Plus Sign (separates molecules that are part of distinct species");
+                    status_bar.setText("Add Plus Sign (separates molecules that are part of distinct species)");
                 } else if (getValue(NAME).equals("add operator (arrow)")) {
                     setMode("add operator (arrow)");
-                    status_bar.setText("Add Single Arrow (defines a unidirectional rule)");
+                    status_bar.setText("Add Single Arrow Separator (defines a unidirectional rule)");
                 } else if (getValue(NAME).equals("add operator (double arrow)")) {
                     setMode("add operator (double arrow)");
-                    status_bar.setText("Add Double Arrow (defines a bidirectional rule)");
+                    status_bar.setText("Add Double Arrow Separator (defines a bidirectional rule)");
                 }
 
             }
