@@ -289,7 +289,7 @@ public class BNGWidgetPanel extends JPanel {
 //		 This method is required by MouseListener.
         public void mouseMoved(MouseEvent e) 
         {   
-            if ( applet.mode.equals("add edges") )
+            if ( applet.mode.equals("add bond") )
             {
                 if ( start != null )
                 {
@@ -318,7 +318,7 @@ public class BNGWidgetPanel extends JPanel {
 			{
 
 			}
-			else if ( applet.mode.equals("add edges") || applet.mode.equals("add maps") ) 
+			else if ( applet.mode.equals("add bond") || applet.mode.equals("add maps") )
 			{
 				if (start != null ) // Start component has been selected
 				{
@@ -359,10 +359,10 @@ public class BNGWidgetPanel extends JPanel {
 										else
 										{
 											// make sure its a map
-											if ( applet.mode.equals("add edges") )
+											if ( applet.mode.equals("add bond") )
 											{	start = null;
 												repaint();
-												displayErrorDialog("Edges cannot span the arrow operator");
+												displayErrorDialog("Bonds cannot span the arrow operator");
 												return;
 											}
 											
@@ -496,7 +496,7 @@ public class BNGWidgetPanel extends JPanel {
 			g.fillRect(0, 0, getWidth(), getHeight() );
 		}
 		
-		if ( applet.mode.contentEquals("add edges") || applet.mode.contentEquals("add maps") )
+		if ( applet.mode.contentEquals("add bond") || applet.mode.contentEquals("add maps") )
 		{
 		 if (start != null)
 		 {
