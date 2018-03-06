@@ -168,7 +168,7 @@ public class BNGModelStub
 
 			if ( !applet.editor_panel.checkMapsAndEdges() )
 			{
-				throwFatalError("Edges cannot span operators. Maps must span the arrow operator.");
+				throwFatalError("Bonds cannot span operators. Maps must span the arrow operator.");
 			}
 		}
 		catch (BNGLInputMalformedException e)
@@ -398,7 +398,7 @@ public class BNGModelStub
 
 				if ( component_pair[1] == null )
 				{
-					String error_msg = "Unmatched edge endpoint: " + me.getKey();
+					String error_msg = "Unmatched bond endpoint: " + me.getKey();
 					throwFatalError( error_msg );
 				}
 
@@ -419,7 +419,7 @@ public class BNGModelStub
 
                 if ( component_pair[1] == null )
                 {
-                    String error_msg = "Unmatched edge endpoint: " + me.getKey();
+                    String error_msg = "Unmatched bond endpoint: " + me.getKey();
                     throwFatalError( error_msg );
                 }
 
@@ -441,7 +441,7 @@ public class BNGModelStub
 
 				if ( component_pair[1] == null )
 				{
-					String error_msg = "Unmatched edge endpoint: " + me.getKey();
+					String error_msg = "Unmatched bond endpoint: " + me.getKey();
 					throwFatalError( error_msg );
 				}
 
@@ -457,7 +457,7 @@ public class BNGModelStub
 
 			if ( !applet.editor_panel.checkMapsAndEdges() )
 			{
-				throwFatalError("Edges cannot span operators. Maps must span the arrow operator");
+				throwFatalError("Bonds cannot span operators. Maps must span the arrow operator");
 			}
 
 			applet.error_bar.setText(information);
@@ -542,7 +542,7 @@ public class BNGModelStub
 				break;
 			}
 
-			System.out.println( "Model: Processing component: " + component_string + " (size="+component_string.length()+")");
+			System.out.println( "Model: Processing site: " + component_string + " (size="+component_string.length()+")");
 
 			BNGComponent new_component = new BNGComponent(panel);
 
@@ -557,14 +557,14 @@ public class BNGModelStub
 
 			if ( !fit.matches() )
 			{
-				String error_msg = "Component "+component_string+" is malformed";
+				String error_msg = "Site "+component_string+" is malformed";
 				throwFatalError( error_msg );
 			}
 
 			String component_label = fit.group(1);
 			String state = fit.group(2);
 
-			System.out.println( "Model: Processing component: state = " + state );
+			System.out.println( "Model: Processing site: state = " + state );
 
 			// Match edges
 			java.util.regex.Pattern edge_pattern = java.util.regex.Pattern.compile("!(\\d+|\\+|\\?)");
@@ -574,7 +574,7 @@ public class BNGModelStub
 			{
 				String edge_id = edge_fit.group(1);
 
-				System.out.println("Found edge " + edge_id + " attached to component " + component_label );
+				System.out.println("Found bond " + edge_id + " attached to site " + component_label );
 
 				if ( edge_id.equals("?") )
 				{
@@ -613,7 +613,7 @@ public class BNGModelStub
 						}
 						else
 						{
-							throwFatalError("Edge \"" + edge_id + "\" has more than two endpoints");
+							throwFatalError("Bond \"" + edge_id + "\" has more than two endpoints");
 						}
 					}
 				}
@@ -629,7 +629,7 @@ public class BNGModelStub
 			{
 				String edge_id = map_fit.group(1);
 
-				System.out.println("Found map " + edge_id + " attached to component " + component_label );
+				System.out.println("Found map " + edge_id + " attached to site " + component_label );
 
 				BNGComponent[] component_pair = (BNGComponent[])map_pairs.get(edge_id);
 

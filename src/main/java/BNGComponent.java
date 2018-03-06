@@ -13,7 +13,7 @@ public class BNGComponent extends BNGWidget
 		super(panel);
 		height = 16;
 		width = 16;
-		setLabel("C");
+		setLabel("s");
 		binding_state = "no additional bonds";
 		
 	}
