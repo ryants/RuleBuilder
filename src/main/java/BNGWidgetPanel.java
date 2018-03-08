@@ -29,7 +29,7 @@ public class BNGWidgetPanel extends JPanel {
 	// Temporary edge end points
 	protected BNGComponent start, end;
 
-	public BNGViewer applet; // Pointer to the applet
+	public RuleBuilder applet; // Pointer to the applet
 
 	protected MouseControl mouse_control = new MouseControl( this );
 	protected KeyboardControl keyboard_control = new KeyboardControl();
@@ -289,7 +289,7 @@ public class BNGWidgetPanel extends JPanel {
 //		 This method is required by MouseListener.
         public void mouseMoved(MouseEvent e) 
         {   
-            if ( applet.mode.equals("add edges") )
+            if ( applet.mode.equals("add bond") )
             {
                 if ( start != null )
                 {
@@ -318,7 +318,7 @@ public class BNGWidgetPanel extends JPanel {
 			{
 
 			}
-			else if ( applet.mode.equals("add edges") || applet.mode.equals("add maps") ) 
+			else if ( applet.mode.equals("add bond") || applet.mode.equals("add maps") )
 			{
 				if (start != null ) // Start component has been selected
 				{
@@ -359,10 +359,10 @@ public class BNGWidgetPanel extends JPanel {
 										else
 										{
 											// make sure its a map
-											if ( applet.mode.equals("add edges") )
+											if ( applet.mode.equals("add bond") )
 											{	start = null;
 												repaint();
-												displayErrorDialog("Edges cannot span the arrow operator");
+												displayErrorDialog("Bonds cannot span the arrow operator");
 												return;
 											}
 											
@@ -417,21 +417,22 @@ public class BNGWidgetPanel extends JPanel {
 					}
 				}
 			}
-			else if ( applet.mode.contains("add components") )
+			else if ( applet.mode.contains("add sites") )
 			{
 				BNGComponent component = new BNGComponent(panel); 
 				component.setX( e.getX() - component.width/2 );
 				component.setY( e.getY() - component.height/2 );
 				addComponent(component);
 		
-				if (applet.mode.equals("add components (allow additional bonds)" ))
+				if (applet.mode.equals("add sites (arbitrary bond state)" ))
 						component.setBindingState("allow additional bonds");
-				else if (applet.mode.equals("add components (no additional bonds)" ))
+				else if (applet.mode.equals("add sites (unbound)" ))
 						component.setBindingState("no additional bonds");
-				else if (applet.mode.equals("add components (additional bonds)" ))
+				else if (applet.mode.equals("add sites (unknown binding partner)" ))
 						component.setBindingState("additional bonds");
 			}
-			else if ( applet.mode.equals("add containers") )
+			else if ( applet.mode.equals("" +
+					"add molecule") )
 			{
 				BNGContainer container = new BNGContainer(panel); 
 				container.setX( e.getX() - container.width/2 );
@@ -470,7 +471,7 @@ public class BNGWidgetPanel extends JPanel {
 		}
 	}
 
-	public BNGWidgetPanel(BNGViewer applet)
+	public BNGWidgetPanel(RuleBuilder applet)
 	{
 		this.applet = applet;
 		addMouseMotionListener(mouse_control);
@@ -496,7 +497,7 @@ public class BNGWidgetPanel extends JPanel {
 			g.fillRect(0, 0, getWidth(), getHeight() );
 		}
 		
-		if ( applet.mode.contentEquals("add edges") || applet.mode.contentEquals("add maps") )
+		if ( applet.mode.contentEquals("add bond") || applet.mode.contentEquals("add maps") )
 		{
 		 if (start != null)
 		 {

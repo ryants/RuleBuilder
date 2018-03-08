@@ -7,7 +7,7 @@
     <name>RuleBuilder</name>
     <groupId>org.ryants.rules</groupId>
     <artifactId>RuleBuilder</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,7 +26,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>BNGViewer</mainClass>
+                            <mainClass>RuleBuilder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

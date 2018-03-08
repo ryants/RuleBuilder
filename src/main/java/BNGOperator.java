@@ -15,8 +15,8 @@ public class BNGOperator extends BNGWidget
 		super(panel);
 		height = 16;
 		width = 16;
-		setTopLabel("k");
-		setBottomLabel("k");
+		setTopLabel("kp");
+		setBottomLabel("km");
 		this.operator_type = operator_type;
 		
 		if ( operator_type == 0 )
