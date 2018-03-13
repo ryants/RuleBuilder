@@ -7,7 +7,7 @@
     <name>RuleBuilder</name>
     <groupId>org.ryants.rules</groupId>
     <artifactId>RuleBuilder</artifactId>
-    <version>0.3</version>
+    <version>2.0.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,6 +24,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>${project.name}-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>RuleBuilder</mainClass>
