@@ -8,7 +8,7 @@ RuleBuilder is built using [Apache Maven](https://maven.apache.org/) and Java v1
 
 ``mvn clean compile package``
 
-The resulting executable JAR file can be found in the ``target/`` subdirectory as ``RuleBuilder-2.0.0.jar``
+The resulting executable JAR file can be found in the ``target/`` subdirectory as ``RuleBuilder-2.0.2.jar``
 
 ### Running RuleBuilder
 This file can be executed from a Unix-like terminal with the command 
