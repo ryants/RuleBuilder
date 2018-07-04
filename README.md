@@ -1,6 +1,6 @@
 # RuleBuilder
 
-RuleBuilder (current version 2.0.0) is a Java application for visualization of rules written in the [BioNetGen language](http://www.bionetgen.org) (BNGL).
+RuleBuilder (current version 2.0.2) is a Java application for visualization of rules written in the [BioNetGen language](http://www.bionetgen.org) (BNGL).
 
 ### Compiling RuleBuilder
 
@@ -13,7 +13,7 @@ The resulting executable JAR file can be found in the ``target/`` subdirectory a
 ### Running RuleBuilder
 This file can be executed from a Unix-like terminal with the command 
 
-``java -jar RuleBuilder-2.0.0.jar``
+``java -jar RuleBuilder-2.0.2.jar``
 
 Alternatively, navigating to the target/ directory and clicking the icon should initialize the program.
 
